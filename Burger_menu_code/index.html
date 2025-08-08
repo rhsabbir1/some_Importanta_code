@@ -1,0 +1,118 @@
+<div class="line-container">
+    <div class="line"></div>
+    <div class="line "></div>
+    <div class=" line"></div>
+</div>
+
+
+<style>
+
+.line{
+    background-color: #000;
+    height: 2px;
+    width: 100%;
+    transition: 0.3s;
+}
+.line-container{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.line-top-transform{
+    transform: rotate(45deg) translate(6px, 5px)
+}
+.line-bottom-transform{
+    transform: rotate(-45deg) translate(6px, -5px)
+}
+.line-middle-transform{
+    opacity: 0;
+}
+
+/*Bottom container*/
+.bottom-container {
+  transition: margin-top 0.5s ease;
+}
+
+.bottom-container.move-down {
+  margin-top: 0px; 
+}
+
+</style>
+
+
+
+<script>
+  const lines = document.querySelectorAll(".line");
+  const menuIcon00 = document.querySelector(".bar-menu");
+  const bottomContainer = document.querySelector(".bottom-container");
+
+  menuIcon00.addEventListener("click", () => {
+    lines[0].classList.toggle("line-top-transform");
+    lines[1].classList.toggle("line-middle-transform");
+    lines[2].classList.toggle("line-bottom-transform");
+
+    bottomContainer.classList.toggle("move-down"); // toggle class to animate
+  }) 
+</script>
+
+
+<!-- For 2 line -->
+
+
+
+<div class="line-container">
+    <div class="line"></div>
+    
+    <div class=" line"></div>
+</div>
+
+
+
+
+.bottom-container
+{
+        display: none !important
+}
+
+.bottom-container.hidden_container {
+  display: block !important
+}
+
+
+<script>
+  const line = document.querySelectorAll(".line");
+  const menuIcon0 = document.querySelector(".bar-menu");
+  const bottomContaine = document.querySelector(".bottom-container");
+
+  menuIcon00.addEventListener("click", () => {
+    lines[0].classList.toggle("line-top-transform");
+    lines[1].classList.toggle("line-bottom-transform");
+
+    bottomContainer.classList.toggle("hidden_container"); // toggle class to animate
+  }) 
+</script>
+
+
+
+
+
+
+
+
+
+<script>
+  const lines3 = document.querySelectorAll(".line");
+  const menuIcon001 = document.querySelector(".bar-menu");
+  const bottomContainer2 = document.querySelector(".mobileMenu_Container");
+
+  menuIcon00.addEventListener("click", () => {
+    lines[0].classList.toggle("line-top-transform");
+    lines[1].classList.toggle("line-middle-transform");
+    lines[2].classList.toggle("line-bottom-transform");
+
+    bottomContainer.classList.toggle("move-down"); // toggle class to animate
+  }) 
+</script>
+
+
