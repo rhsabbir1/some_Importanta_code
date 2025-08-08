@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Creative Animated Section — HTML/CSS/JS</title>
+  <style>
+    /* reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+
+    /* page */
+    body{background:linear-gradient(160deg,#071227 0%, #081426 45%, #061427 100%);color:#e6eef8;overflow:hidden}
+    main{min-height:100vh;display:grid;align-items:center;justify-items:center;padding:40px}
+
+    /* container */
+    .hero{position:relative;width:100%;max-width:1160px;border-radius:20px}
+    .card{position:relative;padding:48px;border-radius:20px;backdrop-filter:blur(8px);background:linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.02));box-shadow:0 14px 50px rgba(2,6,23,0.65);overflow:hidden}
+
+    /* decorative blobs */
+    .blob{position:absolute;border-radius:50%;filter:blur(42px);opacity:0.75;transform:translate3d(0,0,0);will-change:transform}
+    .blob.a{width:460px;height:460px;left:-140px;top:-140px;background:radial-gradient(circle at 20% 20%, #6ee7b7, #3b82f6)}
+    .blob.b{width:320px;height:320px;right:-100px;bottom:-100px;background:radial-gradient(circle at 70% 70%, #f472b6, #7c3aed);opacity:0.62}
+
+    /* particles canvas */
+    canvas.particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:16px}
+
+    /* headline */
+    .headline{position:relative;z-index:3;max-width:920px}
+    .headline h1{font-size:clamp(30px,6vw,64px);line-height:1.02;margin-bottom:14px;letter-spacing:-0.02em;font-weight:700}
+    .headline h1 .word{display:inline-block;opacity:0;transform:translateY(28px) rotateX(10deg);transform-origin:center;padding:0 4px;border-radius:6px}
+
+    /* gradient text effect for important words */
+    .word.gradient{background:linear-gradient(90deg,#9be15d,#00b4db,#7c3aed);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 200%}
+    .word.gradient.animate{animation:gradMove 3.2s linear infinite}
+    @keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .headline p{margin-top:8px;color:rgba(230,238,248,0.9);font-size:18px;max-width:72%}
+    .sub-small{margin-top:10px;color:rgba(230,238,248,0.7);font-size:14px}
+
+    /* cta */
+    .cta{margin-top:24px;display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));backdrop-filter:blur(6px);cursor:pointer;border:1px solid rgba(255,255,255,0.04)}
+    .cta .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,#6ee7b7,#3b82f6);box-shadow:0 6px 18px rgba(60,150,255,0.18)}
+
+    /* small helpers */
+    .muted{opacity:0.82;font-size:14px}
+
+    @keyframes floatyIn{
+      0%{opacity:0;transform:translateY(28px) rotateX(12deg) scale(0.98)}
+      60%{opacity:1;transform:translateY(-6px) rotateX(4deg) scale(1.02)}
+      100%{opacity:1;transform:translateY(0) rotateX(0) scale(1)}
+    }
+
+    .card:hover{transform:translateY(-6px) scale(1.006);transition:transform 300ms cubic-bezier(.2,.9,.2,1)}
+
+    /* prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce){
+      .word, .blob, canvas.particles {transition:none!important;animation:none!important}
+    }
+
+    /* responsive tweaks */
+    @media (max-width:820px){.card{padding:28px}.headline p{max-width:100%}.blob.a{display:none}.blob.b{display:none}}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" aria-label="Creative hero section">
+      <div class="blob a" aria-hidden></div>
+      <div class="blob b" aria-hidden></div>
+
+      <div class="card" id="animated-card" role="region" aria-labelledby="title">
+        <canvas class="particles" id="particlesCanvas" aria-hidden="true"></canvas>
+
+        <div class="headline" id="headline">
+          <h1 id="title">Welcome to Our <span class="word gradient">Creative</span> Space</h1>
+          <p id="subtitle">This is a beautiful animated text section with stunning effects. We use subtle motion, gradient highlights and interactive particles to give your page a premium feel.</p>
+          <div class="sub-small muted">Tip: Hover and move your mouse to interact — or tap on mobile.</div>
+
+          <button class="cta" id="cta" aria-label="Explore our work"><span class="dot" aria-hidden></span> Explore Our Work</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // split title into words and animate
+    (function(){
+      const titleEl = document.getElementById('title');
+      // if already split, skip
+      if(titleEl.dataset.split) return; titleEl.dataset.split = '1';
+
+      const text = titleEl.innerHTML;
+      // simple split keeping html tags intact for the gradient span
+      const tmp = document.createElement('div'); tmp.innerHTML = text;
+      const nodes = Array.from(tmp.childNodes);
+      titleEl.innerHTML = '';
+
+      let i = 0;
+      nodes.forEach(node => {
+        if(node.nodeType === Node.TEXT_NODE){
+          const words = node.textContent.trim().split(/(\s+)/).filter(Boolean);
+          words.forEach(w=>{
+            const span = document.createElement('span');
+            span.className = 'word'; span.textContent = w;
+            const delay = (i++ * 0.08).toFixed(2) + 's';
+            span.style.animation = `floatyIn 680ms cubic-bezier(.2,.9,.2,1) ${delay} both`;
+            titleEl.appendChild(span);
+          });
+        } else {
+          // keep element (like our gradient <span>) and wrap its text
+          const inner = node.textContent.trim().split(/(\s+)/).filter(Boolean);
+          inner.forEach(w=>{
+            const span = document.createElement('span');
+            span.className = 'word gradient'; span.textContent = w;
+            const delay = (i++ * 0.08).toFixed(2) + 's';
+            span.style.animation = `floatyIn 680ms cubic-bezier(.2,.9,.2,1) ${delay} both`;
+            titleEl.appendChild(span);
+          });
+        }
+      });
+
+      // kick gradient animation for gradient words
+      setTimeout(()=>{
+        document.querySelectorAll('.word.gradient').forEach((el, idx)=>{
+          setTimeout(()=>el.classList.add('animate'), 300 + idx*100);
+        });
+      }, 400);
+    })();
+
+    // particle canvas (lighter on small screens)
+    (function(){
+      const canvas = document.getElementById('particlesCanvas');
+      const ctx = canvas.getContext('2d');
+      let w=0,h=0,ratio=window.devicePixelRatio||1;
+      function resize(){
+        w = canvas.clientWidth; h = canvas.clientHeight;
+        canvas.width = Math.round(w * ratio); canvas.height = Math.round(h * ratio);
+        ctx.setTransform(ratio,0,0,ratio,0,0);
+      }
+      window.addEventListener('resize', resize); resize();
+
+      const area = canvas.clientWidth * canvas.clientHeight;
+      const baseNum = Math.max(14, Math.round(area/90000));
+      let particles = [];
+
+      function init(){
+        particles = [];
+        const num = Math.max(8, Math.round(baseNum * (window.innerWidth < 820 ? 0.6 : 1)));
+        for(let i=0;i<num;i++) particles.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.35,vy:(Math.random()-0.5)*0.35,r:1+Math.random()*2,alpha:0.18+Math.random()*0.5});
+      }
+      init();
+      window.addEventListener('resize', init);
+
+      const mouse = {x:-9999,y:-9999};
+      window.addEventListener('mousemove', (e)=>{const r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top});
+      window.addEventListener('touchmove', (e)=>{const t=e.touches[0];const r=canvas.getBoundingClientRect();mouse.x=t.clientX-r.left;mouse.y=t.clientY-r.top},{passive:true});
+
+      function step(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+          p.x += p.vx; p.y += p.vy;
+          if(p.x < -20) p.x = w + 20; if(p.x > w + 20) p.x = -20;
+          if(p.y < -20) p.y = h + 20; if(p.y > h + 20) p.y = -20;
+          const dx = mouse.x - p.x; const dy = mouse.y - p.y; const dist = Math.sqrt(dx*dx+dy*dy);
+          if(dist < 120){const force = (120-dist)/160; p.vx += (dx/dist)*force*0.06; p.vy += (dy/dist)*force*0.06}
+        }
+
+        // lines
+        for(let i=0;i<particles.length;i++){
+          for(let j=i+1;j<particles.length;j++){
+            const a=particles[i], b=particles[j]; const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+            if(d2 < 14000){const alpha = 0.11 * (1 - d2/14000); ctx.beginPath(); ctx.strokeStyle = `rgba(150,180,255,${alpha})`; ctx.lineWidth = 0.6; ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();}
+          }
+        }
+
+        for(const p of particles){ctx.beginPath(); ctx.fillStyle = `rgba(180,210,255,${p.alpha})`; ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();}
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    })();
+
+    // parallax + tilt
+    (function(){
+      const card = document.getElementById('animated-card'); const blobA = document.querySelector('.blob.a'); const blobB = document.querySelector('.blob.b');
+      let w=window.innerWidth,h=window.innerHeight;
+      function onMove(e){const cx = (e.clientX||e.touches?.[0]?.clientX)/w - 0.5; const cy = (e.clientY||e.touches?.[0]?.clientY)/h - 0.5; blobA.style.transform = `translate3d(${cx*18}px, ${cy*12}px, 0) scale(1.02)`; blobB.style.transform = `translate3d(${cx*-14}px, ${cy*-10}px, 0) scale(1.02)`; const tx = cx * 6; const ty = cy * -6; card.style.transform = `perspective(900px) rotateX(${ty}deg) rotateY(${tx}deg)`;}
+      window.addEventListener('mousemove', onMove); window.addEventListener('touchmove', onMove, {passive:true}); window.addEventListener('resize', ()=>{w=window.innerWidth;h=window.innerHeight}); window.addEventListener('mouseleave', ()=>{card.style.transform='';blobA.style.transform='';blobB.style.transform=''});
+    })();
+
+    // entrance
+    (function(){const card=document.getElementById('animated-card');card.style.opacity=0;card.style.transform='translateY(14px)';setTimeout(()=>{card.style.transition='opacity 700ms ease, transform 700ms cubic-bezier(.18,.95,.24,1)';card.style.opacity=1;card.style.transform='translateY(0)';},120)})();
+  </script>
+</body>
+</html>
