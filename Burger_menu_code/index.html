@@ -1,7 +1,7 @@
-<div class="line-container">
-    <div class="line"></div>
+ <div class="line-container">
     <div class="line "></div>
-    <div class=" line"></div>
+    <div class="line "></div>
+    <div class=" line "></div>
 </div>
 
 
@@ -82,22 +82,17 @@
 
 <script>
   const line = document.querySelectorAll(".line");
-  const menuIcon0 = document.querySelector(".bar-menu");
+  const menuIcon = document.querySelector(".bar-menu");
   const bottomContaine = document.querySelector(".bottom-container");
 
-  menuIcon00.addEventListener("click", () => {
-    lines[0].classList.toggle("line-top-transform");
-    lines[1].classList.toggle("line-bottom-transform");
+  menuIcon.addEventListener("click", () => {
+    line[0].classList.toggle("line-top-transform");
+    line[1].classList.toggle("line-middle-transform");
+    line[2].classList.toggle("line-bottom-transform");
 
     bottomContainer.classList.toggle("hidden_container"); // toggle class to animate
   }) 
 </script>
-
-
-
-
-
-
 
 
 
@@ -111,8 +106,74 @@
     lines[1].classList.toggle("line-middle-transform");
     lines[2].classList.toggle("line-bottom-transform");
 
-    bottomContainer.classList.toggle("move-down"); // toggle class to animate
+     bottomContainer.classList.toggle("hidden_container");  // toggle class to animate
   }) 
 </script>
+
+
+
+
+
+/*scroll */
+
+#mainHeader {
+    padding: 20px;
+    transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+#mainHeader.scrolled {
+    padding: 10px 20px !important; 
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+
+<script>
+    window.addEventListener("scroll", function () {
+    const header = document.getElementById("mainHeader");
+    if (window.scrollY > 50) {
+        header.classList.add("scrolled");
+    } else {
+        header.classList.remove("scrolled");
+    }
+});
+</script>
+
+
+
+<!-- Read more read less -->
+
+
+<p>
+  This is the visible text.
+  <span class="more-text" style="display: none;">
+    This is the hidden text that will show when you click Read More.
+  </span>
+</p>
+<button class="read-more-btn">Read More</button>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.querySelector(".custom");
+    const moreText = document.querySelector(".hide");
+
+    btn.addEventListener("click", function () {
+      if (moreText.style.display === "none") {
+        moreText.style.display = "inline";
+        btn.textContent = "SEE MORE";
+      } else {
+        moreText.style.display = "none";
+        btn.textContent = "Read More";
+      }
+    });
+  });
+</script>
+
+
+
+
 
 
