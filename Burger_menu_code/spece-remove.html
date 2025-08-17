@@ -1,0 +1,12 @@
+<script>
+  document.querySelectorAll('span.wixui-rich-text__text').forEach(el => {
+    
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const toClean = [];
+    while (walker.nextNode()) toClean.push(walker.currentNode);
+
+    toClean.forEach(node => {
+      node.nodeValue = node.nodeValue.replace(/\u200B/g, '');
+    });
+  });
+</script>
