@@ -196,8 +196,29 @@
 
 
 
-  
+  <!-- For Single or landing page -->
 
+<script>
+  const lines1 = document.querySelectorAll(".line");
+  const menuIcon1 = document.querySelector(".bar-menu");
+  const bottomContainer1 = document.querySelector(".mobileMenu_Container");
+  const menuLinks = document.querySelectorAll(".mobileMenu_Container li a"); // menu links select
 
+  // Burger click toggle
+  menuIcon.addEventListener("click", () => {
+    lines[0].classList.toggle("line-top-transform");
+    lines[1].classList.toggle("line-middle-transform");
+    lines[2].classList.toggle("line-bottom-transform");
 
+    bottomContainer.classList.toggle("hidden_container");  
+  });
+
+  // Menu link click → close menu
+  menuLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      // Hide menu
+      bottomContainer.classList.add("hidden_container");  
+    });
+  });
+</script>
 
