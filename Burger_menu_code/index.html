@@ -202,7 +202,7 @@
   const lines1 = document.querySelectorAll(".line");
   const menuIcon1 = document.querySelector(".bar-menu");
   const bottomContainer1 = document.querySelector(".mobileMenu_Container");
-  const menuLinks = document.querySelectorAll(".mobileMenu_Container li a"); // menu links select
+  const menuLinks1 = document.querySelectorAll(".mobileMenu_Container li a"); // menu links select
 
   // Burger click toggle
   menuIcon.addEventListener("click", () => {
@@ -222,3 +222,23 @@
   });
 </script>
 
+
+
+<script>
+     const hamburger = document.getElementById("hamburger");
+  const mobileMenu = document.querySelector(".mobile-menu");
+  const menuLinks = document.querySelectorAll(".mobile-menu li a"); // menu-r link gula select
+
+  // Burger click toggle
+  hamburger.addEventListener("click", function () {
+    hamburger.classList.toggle("active");
+    mobileMenu.classList.toggle("active");
+  });
+
+  // Link click korle menu hide hobe
+  menuLinks.forEach(link => {
+    link.addEventListener("click", function () {
+      mobileMenu.classList.remove("active");
+    });
+  });
+</script>
