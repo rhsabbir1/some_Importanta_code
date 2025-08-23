@@ -1,0 +1,242 @@
+function wc_product_gallery_shortcode($atts) {
+    if (!is_product()) return '';
+
+    global $product;
+
+    if (!$product) return '';
+
+    $main_image = wp_get_attachment_image_src(get_post_thumbnail_id($product->get_id()), 'full');
+    $gallery_images = $product->get_gallery_image_ids();
+
+    ob_start();
+    ?>
+    <style>
+        .wc-product-gallery {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 24px;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .wc-main-image {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+			border-radius: 18px;
+			background: #FEFEFE;
+			overflow: hidden;
+        }
+        .wc-main-image img {
+            transition: opacity 0.5s ease-in-out;
+            max-width: 100%;
+            height: auto;
+        }
+        .wc-main-image.no-gallery img {
+            width: 100%;
+        }
+        .wc-gallery-thumbnails {
+            max-width: 88px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            height: 0;
+            overflow: auto;
+            scrollbar-width: none;
+            transition: height 0.3s ease-in-out;
+			border-radius: 12px;
+        }
+        .wc-gallery-thumbnails::-webkit-scrollbar {
+            display: none;
+        }
+        .wc-gallery-thumbnails img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            flex-shrink: 0;
+			border-radius: 12px;
+        }
+        .wc-gallery-thumbnail.active {
+            opacity: 0.6;
+        }
+        .wc-main-image button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+			border-radius: 200px;
+			background: rgba(255, 255, 255, 0.30);
+			box-shadow: 0px 0px 0px 1px rgba(14, 59, 101, 0.04), 0px 1px 1px 0px rgba(14, 59, 101, 0.04), 0px 3px 3px 0px rgba(14, 59, 101, 0.03), 0px 6px 4px 0px rgba(14, 59, 101, 0.02), 0px 11px 4px 0px rgba(14, 59, 101, 0.01), 0px 32px 24px -12px rgba(14, 59, 101, 0.06);
+			backdrop-filter: blur(4px);
+			height: 56px;
+			width: 56px;
+			display: flex;
+    		align-items: center;
+    		justify-content: center;
+        }
+        #prev-arrow {
+            left: 16px;
+			padding: 16px 18px 16px 14px;
+			color: #000000 !important;
+        }
+        #next-arrow {
+            right: 16px;
+			padding: 16px 14px 16px 18px;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .wc-product-gallery {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .wc-gallery-thumbnails {
+                flex-direction: row;
+                max-width: 100%;
+                height: auto !important;
+                overflow: auto;
+				gap: 8px;
+            }
+            .wc-gallery-thumbnails img {
+                width: 80px;
+                height: 80px;
+            }
+            .wc-main-image {
+                width: 100%;
+            }
+			#prev-arrow {
+            	left: 8px;
+				padding: 13px 14px 13px 12px;
+				
+        	}
+        	#next-arrow {
+            	right: 8px;
+				padding: 13px 12px 13px 14px;
+        	}
+			.wc-main-image button{
+				height: 48px;
+    			width: 48px;
+			}
+        }
+    </style>
+
+    <div class="wc-product-gallery">
+        <?php if ($main_image) : ?>
+            <div class="wc-main-image <?php echo empty($gallery_images) ? 'no-gallery' : ''; ?>">
+                <img id="wc-main-image" src="<?php echo esc_url($main_image[0]); ?>" alt="<?php echo esc_attr(get_the_title()); ?>">
+                <?php if (!empty($gallery_images)) : ?>
+                    <button id="prev-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M16.3566 22.6532C16.3566 22.6462 16.3769 22.6362 16.4017 22.6309C16.5557 22.5985 16.7282 22.5148 16.8635 22.4068C16.9449 22.3419 17.6364 21.6583 17.7043 21.5757C17.7795 21.4842 17.8241 21.4203 17.85 21.3674C17.865 21.3368 17.8839 21.3025 17.8921 21.291C17.9004 21.2796 17.9176 21.2358 17.9304 21.1938C17.9433 21.1518 17.9631 21.0875 17.9746 21.0509C18.0058 20.9515 18.0023 20.6591 17.9685 20.5341C17.92 20.3554 17.8588 20.2233 17.7689 20.1035C17.7459 20.073 15.9211 18.2409 13.7138 16.0323C11.5064 13.8237 9.70269 12.0096 9.70555 12.0011C9.70841 11.9925 11.5111 10.184 13.7116 7.98203C15.9121 5.7801 17.734 3.95133 17.7602 3.91813C17.8053 3.86107 17.8885 3.72545 17.9063 3.6799C17.9922 3.4606 17.9995 3.42313 18 3.20183C18.0004 2.98627 17.9999 2.98331 17.9288 2.77713C17.9169 2.74275 17.8896 2.68467 17.868 2.64804C17.8465 2.61142 17.8288 2.5776 17.8288 2.57286C17.8288 2.5292 17.0482 1.73232 16.8604 1.58426C16.7264 1.47858 16.5719 1.40336 16.4225 1.37106C16.3863 1.3632 16.3566 1.35136 16.3566 1.34472C16.3566 1.3381 16.2597 1.33268 16.1413 1.33268C16.0194 1.33268 15.926 1.33822 15.926 1.34547C15.926 1.3525 15.9057 1.36235 15.8809 1.36736C15.7874 1.38622 15.6731 1.43278 15.5411 1.50579C15.509 1.5236 15.4183 1.59454 15.3397 1.66346C15.1187 1.85725 5.80027 11.1879 5.72034 11.2954C5.64062 11.4027 5.55964 11.5607 5.5288 11.6692C5.48155 11.8353 5.47476 12.1607 5.51595 12.2841C5.52614 12.3146 5.53867 12.3584 5.54377 12.3813C5.55196 12.4181 5.58221 12.4833 5.65202 12.6145C5.66337 12.6359 5.69635 12.6827 5.72531 12.7187C5.82544 12.843 15.308 22.321 15.4191 22.4078C15.4802 22.4556 15.5583 22.5085 15.5927 22.5255C15.6271 22.5424 15.6646 22.5615 15.676 22.5678C15.7029 22.5827 15.8229 22.62 15.8809 22.6315C15.9057 22.6364 15.926 22.6462 15.926 22.6532C15.926 22.6605 16.0194 22.666 16.1413 22.666C16.2632 22.666 16.3566 22.6605 16.3566 22.6532Z" fill="white" stroke="white"/>
+</svg></button>
+                    <button id="next-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.64342 22.6532C7.64342 22.6462 7.62312 22.6362 7.59828 22.6309C7.4443 22.5985 7.27184 22.5148 7.13648 22.4068C7.05508 22.3419 6.36358 21.6583 6.29571 21.5757C6.22055 21.4842 6.17585 21.4203 6.14998 21.3674C6.13505 21.3368 6.11609 21.3025 6.10785 21.291C6.09962 21.2796 6.08238 21.2358 6.06956 21.1938C6.05673 21.1518 6.03685 21.0875 6.02538 21.0509C5.99417 20.9515 5.99766 20.6591 6.03153 20.5341C6.07995 20.3554 6.14117 20.2233 6.23113 20.1035C6.25406 20.073 8.07887 18.2409 10.2862 16.0323C12.4936 13.8237 14.2973 12.0096 14.2945 12.0011C14.2916 11.9925 12.4889 10.184 10.2884 7.98203C8.08787 5.7801 6.26599 3.95133 6.23976 3.91813C6.19467 3.86107 6.11151 3.72545 6.09367 3.6799C6.0078 3.4606 6.00045 3.42313 6.00005 3.20183C5.99965 2.98627 6.00013 2.98331 6.07121 2.77713C6.08306 2.74275 6.11041 2.68467 6.13198 2.64804C6.15355 2.61142 6.1712 2.5776 6.1712 2.57286C6.1712 2.5292 6.95177 1.73232 7.13958 1.58426C7.27362 1.47858 7.42812 1.40336 7.57745 1.37106C7.61373 1.3632 7.64342 1.35136 7.64342 1.34472C7.64342 1.3381 7.7403 1.33268 7.8587 1.33268C7.98058 1.33268 8.07398 1.33822 8.07398 1.34547C8.07398 1.3525 8.09428 1.36235 8.11912 1.36736C8.21262 1.38622 8.32687 1.43278 8.45888 1.50579C8.49105 1.5236 8.58167 1.59454 8.66027 1.66346C8.88126 1.85725 18.1997 11.1879 18.2797 11.2954C18.3594 11.4027 18.4404 11.5607 18.4712 11.6692C18.5185 11.8353 18.5252 12.1607 18.4841 12.2841C18.4739 12.3146 18.4613 12.3584 18.4562 12.3813C18.448 12.4181 18.4178 12.4833 18.348 12.6145C18.3366 12.6359 18.3036 12.6827 18.2747 12.7187C18.1746 12.843 8.69205 22.321 8.58092 22.4078C8.51981 22.4556 8.44169 22.5085 8.40731 22.5255C8.37294 22.5424 8.33544 22.5615 8.32398 22.5678C8.29706 22.5827 8.17713 22.62 8.11912 22.6315C8.09428 22.6364 8.07398 22.6462 8.07398 22.6532C8.07398 22.6605 7.98058 22.666 7.8587 22.666C7.73683 22.666 7.64342 22.6605 7.64342 22.6532Z" fill="white" stroke="white"/>
+</svg></button>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($gallery_images) || $main_image) : ?>
+            <div class="wc-gallery-thumbnails" style="<?php echo empty($gallery_images) ? 'display: none;' : ''; ?>">
+                <?php if ($main_image) : ?>
+                    <img class="wc-gallery-thumbnail active" data-index="0" src="<?php echo esc_url($main_image[0]); ?>" alt="<?php echo esc_attr(get_the_title()); ?>">
+                <?php endif; ?>
+                <?php foreach ($gallery_images as $index => $image_id) : 
+                    $image_url = wp_get_attachment_image_src($image_id, 'full'); ?>
+                    <?php if ($image_url) : ?>
+                        <img class="wc-gallery-thumbnail" data-index="<?php echo $index + 1; ?>" src="<?php echo esc_url($image_url[0]); ?>" alt="<?php echo esc_attr(get_the_title()); ?>">
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const galleryImages = document.querySelectorAll(".wc-gallery-thumbnail");
+            const mainImage = document.getElementById("wc-main-image");
+            const prevArrow = document.getElementById("prev-arrow");
+            const nextArrow = document.getElementById("next-arrow");
+            const galleryThumbnails = document.querySelector(".wc-gallery-thumbnails");
+            let currentIndex = 0;
+
+            function updateImage(index) {
+                if (galleryImages.length > 0) {
+                    mainImage.style.opacity = 0;
+                    setTimeout(() => {
+                        mainImage.src = galleryImages[index].src;
+                        mainImage.style.opacity = 1;
+                        galleryImages.forEach(img => img.classList.remove("active"));
+                        galleryImages[index].classList.add("active");
+                        scrollToThumbnail(index);
+                    }, 300);
+                    currentIndex = index;
+                }
+            }
+
+            function scrollToThumbnail(index) {
+                const thumbnail = galleryImages[index];
+                const isMobile = window.getComputedStyle(galleryThumbnails).flexDirection === 'row';
+
+                if (isMobile) {
+                    thumbnail.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                } else {
+                    const thumbnailRect = thumbnail.getBoundingClientRect();
+                    const containerRect = galleryThumbnails.getBoundingClientRect();
+                    const offset = 20;
+
+                    if (thumbnailRect.top < containerRect.top + offset) {
+                        galleryThumbnails.scrollTop -= (containerRect.top + offset - thumbnailRect.top);
+                    } else if (thumbnailRect.bottom > containerRect.bottom - offset) {
+                        galleryThumbnails.scrollTop += (thumbnailRect.bottom - (containerRect.bottom - offset));
+                    }
+                }
+            }
+
+            // Event listeners
+            nextArrow?.addEventListener("click", () => {
+                currentIndex = (currentIndex + 1) % galleryImages.length;
+                updateImage(currentIndex);
+            });
+
+            prevArrow?.addEventListener("click", () => {
+                currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateImage(currentIndex);
+            });
+
+            galleryImages.forEach(thumbnail => {
+                thumbnail.addEventListener("click", () => {
+                    updateImage(parseInt(thumbnail.dataset.index));
+                });
+            });
+
+            // Height synchronization
+            const syncHeights = () => {
+                const mainHeight = mainImage.getBoundingClientRect().height;
+                galleryThumbnails.style.height = `${mainHeight}px`;
+            };
+
+            // Resize observer
+            const resizeObserver = new ResizeObserver(() => {
+                requestAnimationFrame(syncHeights);
+            });
+            
+            resizeObserver.observe(mainImage);
+            if (mainImage.parentElement) {
+                resizeObserver.observe(mainImage.parentElement);
+            }
+
+            // Initial setup
+            requestAnimationFrame(syncHeights);
+            window.addEventListener('resize', () => {
+                requestAnimationFrame(syncHeights);
+            });
+        });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('wc_product_gallery', 'wc_product_gallery_shortcode');
