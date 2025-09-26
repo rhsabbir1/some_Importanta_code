@@ -41,3 +41,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </body>
 </html>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Grab the field rendered by the shortcode
+  const ratingField = document.querySelector("[name='acf[68a989e33f4d4]']");
+  if (!ratingField) {
+    console.warn("Rating field not found. Inspect HTML for correct name/selector.");
+    return;
+  }
+
+  // Create star container right after field
+  const starContainer = document.createElement("div");
+  starContainer.classList.add("stars");
+  ratingField.insertAdjacentElement("afterend", starContainer);
+
+  // Styling for stars
+  const style = document.createElement("style");
+  style.innerHTML = `
+    .stars {
+      font-size: 28px;
+      margin-top: 8px;
+    }
+    .star {
+      color: black;
+      cursor: pointer;
+      transition: color 0.2s;
+      display: inline-block;
+    }
+    .star.active {
+      color: red;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Function to update stars
+  function updateStars(value) {
+    let starsHTML = "";
+    for (let i = 1; i <= 5; i++) {
+      starsHTML += `<span class="star ${i <= value ? "active" : ""}">★</span>`;
+    }
+    starContainer.innerHTML = starsHTML;
+  }
+
+  // For <input type="number">
+  ratingField.addEventListener("input", () => {
+    let val = parseInt(ratingField.value);
+    if (val >= 1 && val <= 5) {
+      updateStars(val);
+    } else {
+      updateStars(0);
+    }
+  });
+
+  // For <select>
+  ratingField.addEventListener("change", () => {
+    let val = parseInt(ratingField.value);
+    if (val >= 1 && val <= 5) {
+      updateStars(val);
+    } else {
+      updateStars(0);
+    }
+  });
+  
+  // Initialize with blank
+  updateStars(0);
+});
+</script>
