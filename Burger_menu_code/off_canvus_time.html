@@ -1,0 +1,41 @@
+<html>
+    <style>
+        /* /////////// off canvas /////////////// */
+
+    .elementor-widget-off-canvas,
+    #off-canvas-20e87f3 {
+    --e-off-canvas-animation-duration: 0.8s;
+    --e-off-canvas-animation-duration-minimum: max(0.001s, var(--e-off-canvas-animation-duration));
+    }
+
+/* /////////// off canvas /////////////// */
+    </style>
+</html>
+
+
+
+
+
+
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const elements = document.querySelectorAll('.e-n-accordion-item-title-text');
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('fade-up-visible');
+        observer.unobserve(entry.target);
+      });
+    }, observerOptions);
+
+    elements.forEach(el => {
+      observer.observe(el);
+    });
+  });
