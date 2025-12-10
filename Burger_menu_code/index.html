@@ -8,7 +8,7 @@
 <style>
 
 .line{
-    background-color: #000;
+    background-color: #ffffff;
     height: 2px;
     width: 100%;
     transition: 0.3s;
@@ -243,3 +243,195 @@
     });
   });
 </script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const header = document.querySelector(".sticky_header");
+
+  if (!header) return; // Stop if no header found
+
+  window.addEventListener("scroll", function() {
+    if (window.scrollY > 50) { // adjust scroll distance
+      header.classList.add("sticky");
+    } else {
+      header.classList.remove("sticky");
+    }
+  });
+});
+</script>
+
+<!-- TOGGOLE BUTTON  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Toggle</title>
+    <style>
+        /* Basic page setup for contrast */
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        /* ----- Box Styling ----- */
+
+        /* Hide the CM box by default */
+        #cm-box {
+            display: none;
+            border: 1px solid #add8e6; /* Light Blue */
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        /* Show the IN box by default */
+        #in-box {
+            display: block;
+            border: 1px solid #ff8c69; /* Orange */
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        /* ----- Switch Styling (from your image) ----- */
+
+        .unit-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none; /* Prevents selecting text on click */
+        }
+
+        /* The switch container */
+        .switch {
+            width: 50px;       /* Width of the switch */
+            height: 25px;      /* Height of the switch */
+            display: flex;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        /* Static black left side (for CM) */
+        .switch::before {
+            content: '';
+            width: 50%;
+            height: 100%;
+            background: #222; /* Dark grey/black */
+            border-radius: 4px 0 0 4px;
+        }
+
+        /* Static orange right side (for IN) */
+        .switch::after {
+            content: '';
+            width: 50%;
+            height: 100%;
+            background: #ff8c69; /* Orange */
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* The moving "slider" (which is just a border) */
+        .slider {
+            position: absolute;
+            top: 0;
+            left: 50%; /* Default position on the right (IN) */
+            width: 50%;
+            height: 100%;
+            border: 2px solid white;
+            box-sizing: border-box; /* Ensures border is included in width/height */
+            border-radius: 4px;
+            transition: left 0.3s ease; /* Animation */
+        }
+
+        /* ----- Label Styling & Active States ----- */
+
+        /* Default state (IN is active) */
+        #cmLabel {
+            color: grey; /* Inactive color */
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        #inLabel {
+            color: #ff8c69; /* Active Orange */
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        /* When 'cm-active' class is added by JS */
+        
+        /* Move slider to the left */
+        .unit-toggle.cm-active .slider {
+            left: 0;
+        }
+
+        /* Change CM label to active color */
+        .unit-toggle.cm-active #cmLabel {
+            color: #add8e6; /* Active Light Blue */
+        }
+
+        /* Change IN label to inactive color */
+        .unit-toggle.cm-active #inLabel {
+            color: grey;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Unit Selector</h1>
+
+    <div class="unit-toggle" id="unitToggle">
+      <span id="cmLabel">CM</span>
+      <div class="switch">
+        <div class="slider"></div>
+      </div>
+      <span id="inLabel">IN</span>
+    </div>
+
+    <div id="cm-box">
+      <h2>Centimeters Box</h2>
+      <p>This content is now visible. The 'in-box' is hidden.</p>
+    </div>
+
+    <div id="in-box">
+      <h2>Inches Box</h2>
+      <p>This is the default content. The 'cm-box' is hidden.</p>
+    </div>
+
+
+    <script>
+        // Wait for the document to fully load
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Get the elements we need to work with
+            const unitToggle = document.getElementById('unitToggle');
+            const cmBox = document.getElementById('cm-box');
+            const inBox = document.getElementById('in-box');
+
+            // Add a click event listener to the entire switch
+            unitToggle.addEventListener('click', () => {
+
+                // 1. Toggle the 'cm-active' class on the main switch container.
+                //    The CSS automatically handles the visual change (slider moving, colors).
+                unitToggle.classList.toggle('cm-active');
+
+                // 2. Check if the switch *now* has the 'cm-active' class
+                if (unitToggle.classList.contains('cm-active')) {
+                    // If YES: Show the CM box and hide the IN box
+                    cmBox.style.display = 'block';
+                    inBox.style.display = 'none';
+                } else {
+                    // If NO (class was removed): Show the IN box and hide the CM box
+                    cmBox.style.display = 'none';
+                    inBox.style.display = 'block';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

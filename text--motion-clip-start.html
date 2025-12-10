@@ -1,0 +1,22 @@
+<h1 class="clip-title">Hello World</h1>
+
+<style>
+.clip-title {
+  font-size: 3rem;
+  font-weight: bold;
+  display: inline-block;
+  color: #000;
+  /* শুরুর অবস্থায় যে clip-path তুমি চেয়েছ */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  animation: reveal 1.2s ease-out forwards;
+}
+
+@keyframes reveal {
+  from {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  }
+  to {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+</style>

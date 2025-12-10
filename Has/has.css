@@ -1,0 +1,25 @@
+.group2 .sub,
+.group3 .sub {
+  display: none;
+}
+
+.myForm:has(.group1 .g1[value="a"]:checked) .group2 .g2-a {
+  display: block;
+}
+.myForm:has(.group1 .g1[value="b"]:checked) .group2 .g2-b {
+  display: block;
+}
+.myForm:has(.group1 .g1[value="c"]:checked) .group2 .g2-c {
+  display: block;
+}
+
+
+.myForm:has(.group2 .g2-a input:checked) .group3 .g3-a {
+  display: block;
+}
+.myForm:has(.group2 .g2-b input:checked) .group3 .g3-b {
+  display: block;
+}
+.myForm:has(.group2 .g2-c input:checked) .group3 .g3-c {
+  display: block;
+}

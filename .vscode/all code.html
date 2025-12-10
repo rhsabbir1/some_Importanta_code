@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+
+
+
+<!-- Change text -->
+ 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+    function replaceSubtotal() {
+        document.querySelectorAll('.elementor-button-text').forEach(el => {
+            if (el.textContent.trim().includes('Checkout')) {
+                el.textContent = 'Procéder au paiement';
+            }
+        });
+    }
+    replaceSubtotal();
+
+   
+    const observer = new MutationObserver(() => {
+        replaceSubtotal();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+});
+
+</script>
+
+<!-- change inner text -->
